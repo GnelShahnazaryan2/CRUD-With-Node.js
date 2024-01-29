@@ -7,10 +7,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+ 
+    <ul>
+        <% obj.forEach(function(justOne) { %>
+        <li>
+        Id - <strong><%= justOne.theaterId %></strong> <br>
+        City - <strong><%= justOne.location.address.city %></strong> /
+        State - <strong><%= justOne.location.address.state %></strong> /
+      
+        </li>
+        <% }); %>
+        </ul>
     <!-- <form action="/addInfo" method="post"> -->
         <div id="div">
         <input type="text" placeholder="Enter your name" name="name" id="name" onkeyup="sendData()" required>
-        <input type="number" placeholder="Enter your age" name="age" id="age" required>
+        <input type="number" placeholder="Enter your age" name="password" id="password" required>
         <input type="email" placeholder="Enter your email" name="email" id="email" required>
         <input type="submit" onclick="sendData()" id="submit">
     </div>

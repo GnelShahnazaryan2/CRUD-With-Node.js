@@ -3,12 +3,12 @@ var path = require("path");
 var bodyParser = require("body-parser")
 var app = express();
 const mongoose = require('mongoose');
-
+app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-const connectionString = 'mongodb+srv://gnelsh:gnel.s@cluster0.tdgbjdu.mongodb.net/sample_mflix';
+const connectionString = 'mongodb+srv://gnelsh:gnel.s@cluster0.tdgbjdu.mongodb.net/Tumo_products';
 
 
 // Connect to MongoDB
@@ -21,50 +21,79 @@ db.on('error', console.error.bind(console, 'Connection error:'));
 
 app.use(express.static("public"));
 
-app.get("/", function(req, res){
-    res.sendFile(path.join(__dirname,'./public/form.html'))
+const Schema = mongoose.Schema;
+
+
+
+app.get("/", function (req, res) {
+    mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+    const db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'Connection error:'));
+    db.once('open', async () => {
+        const userSchema = new Schema({
+            name: {
+              type: String,
+              required: true
+            },
+            email: {
+              type: String,
+              required: true,
+              unique: true
+            },
+            password: {
+              type: String,
+              required: true
+            }
+          
+          });
+            res.render("../public/form.ejs", {
+                obj: result
+           
+    });
 });
 
 
-app.post("/addInfo",async function(req,res){
-    const {name,age,email} = req.body
-    console.log("Data:", name,age,email);
-   var user =  await mongoose.connection.db.collection('test').insertOne({name:name,age:age,email:email})
-    res.redirect("/");
+app.post("/addInfo", async function (req, res) {
+    const name = req.body.name;
+    const password = req.body.password;
+    const email = req.body.email;
+    mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+    const db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'Connection error:'));
+    db.once('open', async () => {
+        console.log('Connected to MongoDB!');
+        try {
+            let result = await mongoose.connection.db.collection('test').insertOne({
+                name: name,
+                email: email,
+                password: password
+            })
+            res.json(result);
+
+        } catch (error) {
+            console.error('Error retrieving movies:', error);
+        } finally {
+            mongoose.connection.close();
+        }
+
+
+    })
 })
 
 
 
-
-app.listen(3000, function(){
-   console.log("Example is running on port 3000");
+app.listen(3000, function () {
+    console.log("Example is running on port 3000");
 });
 
 
-  
 
 
 
 
-// Replace the connection string with your MongoDB connection string
-
-// db.once('open', async () => {
-// console.log('Connected to MongoDB!');
-
-// const user = await mongoose.connection.db.collection('users').updateOne({name:"Gnel"},{$set:{name:'Valod'}})
-
-// // console.log(user);
-
-
-// // await mongoose.connection.db.collection('users').findOneAndDelete({name:"Valod"})
-// // const allUsers = await mongoose.connection.db.collection('user').find().toArray()
-
-// // console.log("All Movies:",allUsers)
-
-// // You can add additional code here for testing or other operations
-// // Make sure to close the connection when you're done
-// mongoose.connection.close();
-// });
 
 
 
+
+
+})

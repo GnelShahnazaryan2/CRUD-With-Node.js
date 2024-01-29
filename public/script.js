@@ -1,5 +1,5 @@
 var a = document.getElementById("name");
-var age = document.getElementById("age");
+var age = document.getElementById("password");
 var email = document.getElementById("email")
 
 function sendData() {
@@ -8,7 +8,7 @@ function sendData() {
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
         },
-        body: JSON.stringify({name:a.value,age:age.value,email:email.value})
+        body: JSON.stringify({name:a.value,password:password.value,email:email.value})
       })
 
 }
