@@ -10,73 +10,53 @@ app.use(bodyParser.json());
 
 const connectionString = 'mongodb+srv://gnelsh:gnel.s@cluster0.tdgbjdu.mongodb.net/Tumo_products';
 
-
-// Connect to MongoDB
-mongoose.connect(connectionString, { useUnifiedTopology: true });
-
-// Check the connection
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Connection error:'));
-
-
 app.use(express.static("public"));
-
-const Schema = mongoose.Schema;
-
-
 
 app.get("/", function (req, res) {
     mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'Connection error:'));
     db.once('open', async () => {
-        const userSchema = new Schema({
-            name: {
-              type: String,
-              required: true
-            },
-            email: {
-              type: String,
-              required: true,
-              unique: true
-            },
-            password: {
-              type: String,
-              required: true
-            }
-          
-          });
-            res.render("../public/form.ejs", {
+        try {
+            let result = await mongoose.connection.db.collection('Products').find().toArray()
+            res.render('../public/form.ejs', {
                 obj: result
-           
-    });
-});
+            });
+        } catch (error) {
+            console.error('Error retrieving movies:', error);
+        } finally {
+            mongoose.connection.close();
+        }
+    })
+})
 
 
 app.post("/addInfo", async function (req, res) {
     const name = req.body.name;
-    const password = req.body.password;
-    const email = req.body.email;
+    const price = req.body.price;
+    const img = req.body.img;
+    const des = req.body.description;
+    const uuid = req.body.UUID;
     mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'Connection error:'));
     db.once('open', async () => {
         console.log('Connected to MongoDB!');
         try {
-            let result = await mongoose.connection.db.collection('test').insertOne({
+            let result = await mongoose.connection.db.collection('products').insertOne({
                 name: name,
-                email: email,
-                password: password
+                price: price,
+                image: img,
+                description: des,
+                uuid: uuid
             })
-            res.json(result);
-
+            // console.log(result);
+            res.redirect('/')
         } catch (error) {
             console.error('Error retrieving movies:', error);
         } finally {
             mongoose.connection.close();
         }
-
-
     })
 })
 
@@ -85,15 +65,3 @@ app.post("/addInfo", async function (req, res) {
 app.listen(3000, function () {
     console.log("Example is running on port 3000");
 });
-
-
-
-
-
-
-
-
-
-
-
-})

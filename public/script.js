@@ -1,6 +1,8 @@
 var a = document.getElementById("name");
-var age = document.getElementById("password");
-var email = document.getElementById("email")
+var price = document.getElementById("price");
+var img = document.getElementById("img");
+var des = document.getElementById("description");
+var uuid = document.getElementById("uuid")
 
 function sendData() {
     fetch("http://localhost:3000/addInfo", {
@@ -8,7 +10,11 @@ function sendData() {
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
         },
-        body: JSON.stringify({name:a.value,password:password.value,email:email.value})
+        body: JSON.stringify({name:a.value,price:price.value,img:img.value,description:des.value,UUID:uuid.value})
       })
+      console.log(a.value, price.value, img.value, description.value, uuid.value)
+
+
+
 
 }
